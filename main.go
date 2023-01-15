@@ -19,5 +19,6 @@ func main() {
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
 	r.POST("/create", middlewares.Auth, controllers.CreatePoll)
+	r.POST("/create/:id/choice", middlewares.Auth, controllers.CreateChoice)
 	r.Run()
 }
