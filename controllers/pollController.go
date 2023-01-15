@@ -68,3 +68,18 @@ func CreateChoice(c *gin.Context) {
 		}
 	}
 }
+
+func ReadChoice(c *gin.Context) {
+	id := c.Param("id")
+	var curChoice []models.PollChoice
+	result := initializers.DB.Where("poll_id = ?", id).Find(&curChoice)
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "error, choice didnt exist",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"choice": curChoice,
+		})
+	}
+}
