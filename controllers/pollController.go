@@ -22,7 +22,7 @@ func CreatePoll(c *gin.Context) {
 			})
 		} else {
 			curUser, _ := c.Get("currentUser")
-			newPoll := models.Poll{Subject: poll.Subject, Description: poll.Description, TotalVote: 0, UserID: int(curUser.(models.User).ID)}
+			newPoll := models.Poll{Subject: poll.Subject, Description: poll.Description, TotalVote: 0, UserID: uint(curUser.(models.User).ID)}
 			result := initializers.DB.Create(&newPoll)
 			if result.Error != nil {
 				c.JSON(400, gin.H{
@@ -69,7 +69,7 @@ func CreateChoice(c *gin.Context) {
 			id := c.Param("id")
 			var curPoll models.Poll
 			initializers.DB.First(&curPoll, id)
-			newChoice := models.PollChoice{Choice: choice.Choice, TotalVote: 0, PollID: int(curPoll.ID)}
+			newChoice := models.PollChoice{Choice: choice.Choice, TotalVote: 0, PollID: uint(curPoll.ID)}
 			result := initializers.DB.Create(&newChoice)
 			if result.Error != nil {
 				c.JSON(400, gin.H{

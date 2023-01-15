@@ -6,25 +6,20 @@ type Poll struct {
 	gorm.Model
 	Subject     string `gorm:"unique;not null"`
 	Description string
-	TotalVote   int
-	UserID      int
-	User        User
+	TotalVote   uint
+	UserID      uint
 }
 
 type PollChoice struct {
 	gorm.Model
 	Choice    string `gorm:"not null"`
-	TotalVote int
-	PollID    int
-	Poll      Poll
+	TotalVote uint
+	PollID    uint
 }
 
 type PollEntry struct {
 	gorm.Model
-	UserID       int
-	PollChoiceID int
-	PollID       int
-	User         User
-	PollChoice   PollChoice
-	Poll         Poll
+	UserID       uint
+	PollChoiceID uint
+	PollID       uint
 }
