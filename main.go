@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bayunashr/gopoll/controllers"
 	"github.com/bayunashr/gopoll/initializers"
+	"github.com/bayunashr/gopoll/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,5 +18,6 @@ func main() {
 	r.GET("/", controllers.GuestHome)
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
+	r.POST("/create", middlewares.Auth, controllers.CreatePoll)
 	r.Run()
 }
