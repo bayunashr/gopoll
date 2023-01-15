@@ -1,9 +1,14 @@
 package controllers
 
 import (
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/bayunashr/gopoll/initializers"
 	"github.com/bayunashr/gopoll/models"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -73,10 +78,22 @@ func LogIn(c *gin.Context) {
 						"message": "error, wrong password",
 					})
 				} else {
-					c.JSON(200, gin.H{
-						"message": "success, youre logged in",
-						"user":    selUser.Name,
+					token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+						"id":  selUser.ID,
+						"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
 					})
+					tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+					if err != nil {
+						c.JSON(400, gin.H{
+							"message": "error, fail to create token",
+						})
+					} else {
+						c.SetSameSite(http.SameSiteLaxMode)
+						c.SetCookie("authorization", tokenString, 3600*24*30, "", "", false, true)
+						c.JSON(200, gin.H{
+							"message": "success, youre logged in",
+						})
+					}
 				}
 			}
 		}
