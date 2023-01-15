@@ -37,7 +37,7 @@ func CreatePoll(c *gin.Context) {
 	}
 }
 
-func ReadPoll(c *gin.Context) {
+func ReadMyPoll(c *gin.Context) {
 	curUser, _ := c.Get("currentUser")
 	var myPoll []models.Poll
 	result := initializers.DB.Where("user_id = ?", curUser.(models.User).ID).Find(&myPoll)
@@ -48,6 +48,38 @@ func ReadPoll(c *gin.Context) {
 	} else {
 		c.JSON(200, gin.H{
 			"poll": myPoll,
+		})
+	}
+}
+
+func ReadAllPoll(c *gin.Context) {
+	var allPoll []models.Poll
+	result := initializers.DB.Find(&allPoll)
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "error, poll didnt exist",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"poll": allPoll,
+		})
+	}
+}
+
+func ReadSpcPoll(c *gin.Context) {
+	id := c.Param("id")
+	var spcPoll []models.Poll
+	var spcPollChoice []models.PollChoice
+	pollResult := initializers.DB.Where("id", id).First(&spcPoll)
+	pollChoiceResult := initializers.DB.Where("poll_id", id).Find(&spcPollChoice)
+	if pollResult.Error != nil || pollChoiceResult.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "error, poll didnt exist",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"poll":       spcPoll,
+			"pollChoice": spcPollChoice,
 		})
 	}
 }
