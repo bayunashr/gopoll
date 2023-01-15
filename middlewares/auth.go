@@ -37,7 +37,7 @@ func Auth(c *gin.Context) {
 						"message": "error, session expired",
 					})
 				} else {
-					c.Set("user", user)
+					c.Set("currentUser", user)
 				}
 			}
 		} else {
