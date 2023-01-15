@@ -19,6 +19,7 @@ func main() {
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
 	r.POST("/create", middlewares.Auth, controllers.CreatePoll)
+	r.GET("/mypoll", middlewares.Auth, controllers.ReadPoll)
 	r.POST("/create/:id/choice", middlewares.Auth, controllers.CreateChoice)
 	r.GET("/create/:id/choice", middlewares.Auth, controllers.ReadChoice)
 	r.Run()

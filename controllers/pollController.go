@@ -37,6 +37,21 @@ func CreatePoll(c *gin.Context) {
 	}
 }
 
+func ReadPoll(c *gin.Context) {
+	curUser, _ := c.Get("currentUser")
+	var myPoll []models.Poll
+	result := initializers.DB.Where("user_id = ?", curUser.(models.User).ID).Find(&myPoll)
+	if result.Error != nil {
+		c.JSON(400, gin.H{
+			"message": "error, poll didnt exist",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"poll": myPoll,
+		})
+	}
+}
+
 func CreateChoice(c *gin.Context) {
 	var choice struct {
 		Choice string
@@ -71,15 +86,15 @@ func CreateChoice(c *gin.Context) {
 
 func ReadChoice(c *gin.Context) {
 	id := c.Param("id")
-	var curChoice []models.PollChoice
-	result := initializers.DB.Where("poll_id = ?", id).Find(&curChoice)
+	var myChoice []models.PollChoice
+	result := initializers.DB.Where("poll_id = ?", id).Find(&myChoice)
 	if result.Error != nil {
 		c.JSON(400, gin.H{
 			"message": "error, choice didnt exist",
 		})
 	} else {
 		c.JSON(200, gin.H{
-			"choice": curChoice,
+			"choice": myChoice,
 		})
 	}
 }
