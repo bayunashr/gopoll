@@ -18,11 +18,11 @@ func main() {
 	r.GET("/", controllers.GuestHome)
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
-	r.POST("/create", middlewares.Auth, controllers.CreatePoll)
-	r.GET("/mypoll", middlewares.Auth, controllers.ReadMyPoll)
-	r.GET("/allpoll", middlewares.Auth, controllers.ReadAllPoll)
+
+	r.POST("/poll", middlewares.Auth, controllers.CreatePoll)
+	r.GET("/poll", middlewares.Auth, controllers.ReadAllPoll)
 	r.GET("/poll/:id", middlewares.Auth, controllers.ReadSpcPoll)
-	r.POST("/create/:id/choice", middlewares.Auth, controllers.CreateChoice)
-	r.GET("/create/:id/choice", middlewares.Auth, controllers.ReadChoice)
+	r.GET("/poll/mine", middlewares.Auth, controllers.ReadMyPoll)
+	r.POST("/poll/:id", middlewares.Auth, controllers.CreateChoice)
 	r.Run()
 }
