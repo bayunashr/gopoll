@@ -68,16 +68,35 @@ func ReadAllPoll(c *gin.Context) {
 
 func ReadSpcPoll(c *gin.Context) {
 	id := c.Param("id")
-	var spcPoll []models.Poll
-	pollResult := initializers.DB.Where("id", id).Preload("PollChoice").First(&spcPoll)
-	if pollResult.Error != nil {
-		c.JSON(400, gin.H{
-			"message": "error, poll didnt exist",
-		})
+	curUser, _ := c.Get("currentUser")
+	var spcPoll models.Poll
+	pollResult := initializers.DB.Where("id", id).Preload("PollChoice").Take(&spcPoll)
+	if spcPoll.UserID == curUser.(models.User).ID {
+		if pollResult.Error != nil {
+			c.JSON(400, gin.H{
+				"message": "error, poll didnt exist",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"poll": spcPoll,
+			})
+		}
 	} else {
-		c.JSON(200, gin.H{
-			"poll": spcPoll,
-		})
+		if !spcPoll.Visibility {
+			c.JSON(400, gin.H{
+				"message": "error, poll is private",
+			})
+		} else {
+			if pollResult.Error != nil {
+				c.JSON(400, gin.H{
+					"message": "error, poll didnt exist",
+				})
+			} else {
+				c.JSON(200, gin.H{
+					"poll": spcPoll,
+				})
+			}
+		}
 	}
 }
 
