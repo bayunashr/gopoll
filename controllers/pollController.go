@@ -115,16 +115,23 @@ func CreateChoice(c *gin.Context) {
 
 func PublishPoll(c *gin.Context) {
 	id := c.Param("id")
+	curUser, _ := c.Get("currentUser")
 	var curPoll models.Poll
 	initializers.DB.Take(&curPoll, id)
-	result := initializers.DB.Model(&curPoll).Update("visibility", true)
-	if result.Error != nil {
-		c.JSON(400, gin.H{
-			"message": "error, fail to publish poll",
-		})
+	if uint(curUser.(models.User).ID) == curPoll.UserID {
+		result := initializers.DB.Model(&curPoll).Update("visibility", true)
+		if result.Error != nil {
+			c.JSON(400, gin.H{
+				"message": "error, fail to publish poll",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"message": "success, poll on air",
+			})
+		}
 	} else {
-		c.JSON(200, gin.H{
-			"message": "success, poll on air",
+		c.JSON(401, gin.H{
+			"message": "error, youre not the owner",
 		})
 	}
 }
@@ -146,7 +153,7 @@ func ArchivePoll(c *gin.Context) {
 			})
 		}
 	} else {
-		c.JSON(400, gin.H{
+		c.JSON(401, gin.H{
 			"message": "error, youre not the owner",
 		})
 	}
