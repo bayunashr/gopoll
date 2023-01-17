@@ -1,5 +1,5 @@
 # gopoll
 
-simple app for polling using gin with postgres
+simple app for open polling using gin with postgres
 
 ### api documentation is wip
