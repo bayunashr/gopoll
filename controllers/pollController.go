@@ -101,36 +101,81 @@ func ReadSpcPoll(c *gin.Context) {
 }
 
 func CreateChoice(c *gin.Context) {
-	var choice struct {
-		Choice string
-	}
-	if c.Bind(&choice) != nil {
-		c.JSON(400, gin.H{
-			"message": "error, fail to read body",
-		})
-	} else {
-		if choice.Choice == "" {
-			c.JSON(400, gin.H{
-				"message": "error, fill all required fields",
-			})
-		} else {
-			id := c.Param("id")
-			var curPoll models.Poll
-			initializers.DB.First(&curPoll, id)
-			newChoice := models.PollChoice{Choice: choice.Choice, TotalVote: 0, PollID: uint(curPoll.ID)}
-			result := initializers.DB.Create(&newChoice)
-			if result.Error != nil {
+	id := c.Param("id")
+	curUser, _ := c.Get("currentUser")
+	var curPoll models.Poll
+	initializers.DB.Take(&curPoll, id)
+	if curPoll.UserID == curUser.(models.User).ID {
+		if !curPoll.Visibility && !curPoll.Archive {
+			var choice struct {
+				Choice string
+			}
+			if c.Bind(&choice) != nil {
 				c.JSON(400, gin.H{
-					"message": "error, fail to create new poll choice",
+					"message": "error, fail to read body",
 				})
 			} else {
-				c.JSON(200, gin.H{
-					"message": "success, created new poll choice",
-				})
+				if choice.Choice == "" {
+					c.JSON(400, gin.H{
+						"message": "error, fill all required fields",
+					})
+				} else {
+					newChoice := models.PollChoice{Choice: choice.Choice, TotalVote: 0, PollID: uint(curPoll.ID)}
+					result := initializers.DB.Create(&newChoice)
+					if result.Error != nil {
+						c.JSON(400, gin.H{
+							"message": "error, fail to create new poll choice",
+						})
+					} else {
+						c.JSON(200, gin.H{
+							"message": "success, created new poll choice",
+						})
+					}
+				}
 			}
+		} else {
+			c.JSON(400, gin.H{
+				"message": "error, poll is either on air or archived",
+			})
 		}
+	} else {
+		c.JSON(400, gin.H{
+			"message": "error, poll is not yours",
+		})
 	}
 }
+
+// func CreateChoice(c *gin.Context) {
+// 	var choice struct {
+// 		Choice string
+// 	}
+// 	if c.Bind(&choice) != nil {
+// 		c.JSON(400, gin.H{
+// 			"message": "error, fail to read body",
+// 		})
+// 	} else {
+// 		if choice.Choice == "" {
+// 			c.JSON(400, gin.H{
+// 				"message": "error, fill all required fields",
+// 			})
+// 		} else {
+// 			id := c.Param("id")
+// 			var curPoll models.Poll
+// 			initializers.DB.First(&curPoll, id)
+// 			newChoice := models.PollChoice{Choice: choice.Choice, TotalVote: 0, PollID: uint(curPoll.ID)}
+// 			result := initializers.DB.Create(&newChoice)
+// 			if result.Error != nil {
+// 				c.JSON(400, gin.H{
+// 					"message": "error, fail to create new poll choice",
+// 				})
+// 			} else {
+// 				c.JSON(200, gin.H{
+// 					"message": "success, created new poll choice",
+// 				})
+// 			}
+// 		}
+// 	}
+// }
 
 func PublishPoll(c *gin.Context) {
 	id := c.Param("id")

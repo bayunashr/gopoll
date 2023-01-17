@@ -23,9 +23,9 @@ func main() {
 	r.POST("/poll", middlewares.Auth, controllers.CreatePoll)
 	r.GET("/poll", middlewares.Auth, controllers.ReadAllPoll)
 	r.GET("/poll/:id", middlewares.Auth, controllers.ReadSpcPoll)
-	r.PUT("/poll/:id", middlewares.Auth, controllers.PublishPoll)
 	r.POST("/poll/:id", middlewares.Auth, controllers.CreateChoice)
 
+	r.PUT("/poll/:id/publish", middlewares.Auth, controllers.PublishPoll)
 	r.PUT("/poll/:id/archive", middlewares.Auth, controllers.ArchivePoll)
 	r.POST("/poll/:id/vote", middlewares.Auth, controllers.VotePoll)
 
