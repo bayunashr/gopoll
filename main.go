@@ -15,6 +15,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
 	r.GET("/", controllers.GuestHome)
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
@@ -22,7 +23,11 @@ func main() {
 	r.POST("/poll", middlewares.Auth, controllers.CreatePoll)
 	r.GET("/poll", middlewares.Auth, controllers.ReadAllPoll)
 	r.GET("/poll/:id", middlewares.Auth, controllers.ReadSpcPoll)
-	r.GET("/poll/mine", middlewares.Auth, controllers.ReadMyPoll)
+	r.PUT("/poll/:id", middlewares.Auth, controllers.PublishPoll)
 	r.POST("/poll/:id", middlewares.Auth, controllers.CreateChoice)
+
+	r.PUT("/poll/:id/archive", middlewares.Auth, controllers.ArchivePoll)
+	r.POST("/poll/:id/vote", middlewares.Auth, controllers.VotePoll)
+
 	r.Run()
 }
