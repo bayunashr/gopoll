@@ -37,6 +37,70 @@ func CreatePoll(c *gin.Context) {
 	}
 }
 
+func UpdatePoll(c *gin.Context) {
+	id := c.Param("id")
+	curUser, _ := c.Get("currentUser")
+	var curPoll models.Poll
+	initializers.DB.Where("id", id).Take(&curPoll)
+	if curPoll.UserID == curUser.(models.User).ID {
+		if !curPoll.Visibility && !curPoll.Archive {
+			var poll struct {
+				Subject     string
+				Description string
+			}
+			if c.Bind(&poll) != nil {
+				c.JSON(400, gin.H{
+					"message": "error, fail to read body",
+				})
+			} else {
+				result := initializers.DB.Model(&curPoll).Updates(models.Poll{Subject: poll.Subject, Description: poll.Description})
+				if result.Error != nil {
+					c.JSON(400, gin.H{
+						"message": "error, fail to read body",
+					})
+				} else {
+					c.JSON(200, gin.H{
+						"message": "success, poll update",
+					})
+				}
+			}
+		} else {
+			c.JSON(400, gin.H{
+				"message": "error, no poll",
+			})
+		}
+	} else {
+		c.JSON(400, gin.H{
+			"message": "error, no poll",
+		})
+	}
+}
+
+func DeletePoll(c *gin.Context) {
+	id := c.Param("id")
+	curUser, _ := c.Get("currentUser")
+	var curPoll models.Poll
+	initializers.DB.Where("id", id).Take(&curPoll)
+	if curPoll.UserID == curUser.(models.User).ID {
+		deletedPoll := initializers.DB.Delete(&curPoll)
+		var curPollChoice []models.PollChoice
+		deletedChoice := initializers.DB.Where("poll_id = ?", curPoll.ID).Delete(&curPollChoice)
+		if deletedPoll.Error != nil || deletedChoice.Error != nil {
+			c.JSON(400, gin.H{
+				"message": "error, fail to delete poll",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"message": "success, poll gone",
+			})
+		}
+	} else {
+		c.JSON(400, gin.H{
+			"message": "error, no poll",
+		})
+	}
+}
+
 func ReadAllPoll(c *gin.Context) {
 	isMine := c.Query("mine")
 	var allPoll []models.Poll
