@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Poll struct {
 	gorm.Model
-	Subject     string `gorm:"unique"`
+	Subject     string
 	Description string
 	TotalVote   uint
 	Visibility  bool
