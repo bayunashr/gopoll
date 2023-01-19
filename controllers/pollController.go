@@ -210,9 +210,9 @@ func CreateChoice(c *gin.Context) {
 }
 
 func DeleteChoice(c *gin.Context) {
-	id := c.Param("id")
+	id, ch := c.Param("id"), c.Param("ch")
 	var curChoice models.PollChoice
-	reslut := initializers.DB.Where("id", id).Delete(&curChoice)
+	reslut := initializers.DB.Debug().Where("id = ? AND poll_id = ?", ch, id).Delete(&curChoice)
 	if reslut.Error != nil {
 		c.JSON(400, gin.H{
 			"message": "error, fail to delete choice",
