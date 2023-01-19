@@ -27,6 +27,7 @@ func main() {
 	r.DELETE("/poll/:id", middlewares.Auth, controllers.DeletePoll)
 
 	r.POST("/poll/:id/choice", middlewares.Auth, controllers.CreateChoice)
+	r.DELETE("/poll/:id/choice", middlewares.Auth, controllers.DeleteChoice)
 
 	r.PUT("/poll/:id/publish", middlewares.Auth, controllers.PublishPoll)
 	r.PUT("/poll/:id/archive", middlewares.Auth, controllers.ArchivePoll)
