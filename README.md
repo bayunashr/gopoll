@@ -9,8 +9,8 @@ Body:
 ```json
 {
     "Email": "email@email.com",
-	"Password": "password",
-	"Name": "firstname lastname"
+    "Password": "password",
+    "Name": "firstname lastname"
 }
 ```
 
@@ -18,7 +18,7 @@ Response:
 
 ```json
 {
-	"message": "success created new user"
+    "message": "success created new user"
 }
 ```
 
@@ -31,7 +31,7 @@ Body:
 ```json
 {
     "Email": "email@email.com",
-	"Password": "password"
+    "Password": "password"
 }
 ```
 
@@ -39,6 +39,6 @@ Response:
 
 ```json
 {
-	"message": "success logged in"
+    "message": "success logged in"
 }
 ```
