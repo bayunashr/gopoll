@@ -1,5 +1,23 @@
-# gopoll
+## Gopoll
 
-simple app for open polling using gin with postgres
+- **Sign Up API Call**
 
-### api documentation is wip
+http://localhost:3000/signup
+
+Body:
+
+```json
+{
+	"Email": "email@email.com",
+	"Password": "password",
+	"Name": "firstname lastname"
+}
+```
+
+Response: 
+
+```json
+{
+	"message": "success created new user"
+}
+```
