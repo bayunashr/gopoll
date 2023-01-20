@@ -271,23 +271,29 @@ func ArchivePoll(c *gin.Context) {
 }
 
 func VotePoll(c *gin.Context) {
-	id := c.Param("id")
+	id, ch := c.Param("id"), c.Param("ch")
 	curUser, _ := c.Get("currentUser")
 	var curPoll models.Poll
+	var curEntry models.PollEntry
+	var curChocie models.PollChoice
 	initializers.DB.First(&curPoll, id)
-	var pollEntry struct {
-		PollChoiceID uint
-	}
-	c.Bind(&pollEntry)
-	newVote := models.PollEntry{UserID: uint(curUser.(models.User).ID), PollChoiceID: pollEntry.PollChoiceID, PollID: curPoll.ID}
-	result := initializers.DB.Create(&newVote)
+	initializers.DB.First(&curChocie, ch)
+	result := initializers.DB.Where("user_id = ? AND poll_id = ?", uint(curUser.(models.User).ID), curPoll.ID).Take(&curEntry)
 	if result.Error != nil {
-		c.JSON(400, gin.H{
-			"message": "error, fail to vote",
-		})
+		newVote := models.PollEntry{UserID: uint(curUser.(models.User).ID), PollChoiceID: curChocie.ID, PollID: curPoll.ID}
+		result := initializers.DB.Create(&newVote)
+		if result.Error != nil {
+			c.JSON(400, gin.H{
+				"message": "error, fail to vote",
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"message": "success, vote hit",
+			})
+		}
 	} else {
-		c.JSON(200, gin.H{
-			"message": "success, vote hit",
+		c.JSON(400, gin.H{
+			"message": "error, youre already vote",
 		})
 	}
 }

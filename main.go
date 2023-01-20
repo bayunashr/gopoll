@@ -31,7 +31,7 @@ func main() {
 
 	r.PUT("/poll/:id/publish", middlewares.Auth, controllers.PublishPoll)
 	r.PUT("/poll/:id/archive", middlewares.Auth, controllers.ArchivePoll)
-	r.POST("/poll/:id/vote", middlewares.Auth, controllers.VotePoll)
+	r.POST("/poll/:id/vote/:ch", middlewares.Auth, controllers.VotePoll)
 
 	r.Run()
 }
