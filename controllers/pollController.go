@@ -4,6 +4,7 @@ import (
 	"github.com/bayunashr/gopoll/initializers"
 	"github.com/bayunashr/gopoll/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func CreatePoll(c *gin.Context) {
@@ -316,10 +317,10 @@ func VotePoll(c *gin.Context) {
 					"message": "error, fail to vote",
 				})
 			} else {
+				initializers.DB.Model(&curPoll).UpdateColumn("total_vote", gorm.Expr("total_vote + ?", 1))
+				initializers.DB.Model(&curChocie).UpdateColumn("total_vote", gorm.Expr("total_vote + ?", 1))
 				c.JSON(200, gin.H{
 					"message": "success, vote hit",
-					"newVote": newVote,
-					"curPoll": curPoll,
 				})
 			}
 		} else {
