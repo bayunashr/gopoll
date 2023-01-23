@@ -19,6 +19,7 @@ func main() {
 	r.GET("/", controllers.PublicHome)
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.LogIn)
+	r.POST("/logout", middlewares.Auth, controllers.LogOut)
 
 	r.POST("/poll", middlewares.Auth, controllers.CreatePoll)
 	r.GET("/poll", middlewares.Auth, controllers.ReadAllPoll)

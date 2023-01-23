@@ -99,3 +99,10 @@ func LogIn(c *gin.Context) {
 		}
 	}
 }
+
+func LogOut(c *gin.Context) {
+	c.SetCookie("authorization", "", -1, "", "", false, true)
+	c.JSON(200, gin.H{
+		"message": "success, youre logged out",
+	})
+}
